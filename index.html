@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#e7edf2">
+<meta name="theme-color" content="#e7edf2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1217" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Consulta de los niveles ganglionares cervicales (Ia a Xb) según el consenso de Grégoire 2014.">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cerviganglios">
+<title>Cerviganglios</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./icons/icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="./icons/icon-180.png" sizes="180x180">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body data-view="niveles">
+<div class="shell">
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="topbar">
+  <div class="brand-row">
+    <h1>Cerviganglios</h1>
+    <p class="tagline">Grégoire 2014</p>
+    <p class="ver" id="ver">v1.0</p>
+    <p class="offline" id="offline">Sin conexión</p>
+  </div>
+
+  <div id="ios-hint" class="ios-hint" hidden>
+    <p>En Safari, pulsa <strong>Compartir</strong> y elige <strong>Añadir a pantalla de inicio</strong>.</p>
+    <button type="button" id="ios-hint-close">Cerrar</button>
+  </div>
+
+  <div class="tools">
+    <label class="search">
+      <span class="vh">Buscar por nivel, estructura o tumor</span>
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16.5L20 20.5"></path></svg>
+      <input id="q" type="search" placeholder="Buscar: hioides, ECM, nasofaringe…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+      <button type="button" class="q-clear" id="q-clear" hidden aria-label="Borrar búsqueda">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"></path></svg>
+      </button>
+    </label>
+
+    <div class="segment" id="groups" role="radiogroup" aria-label="Grupo de niveles">
+      <button type="button" role="radio" data-group="todos" aria-checked="true" tabindex="0">Todos</button>
+      <button type="button" role="radio" data-group="cuello" aria-checked="false" tabindex="-1">I–VI</button>
+      <button type="button" role="radio" data-group="retro" aria-checked="false" tabindex="-1">VII</button>
+      <button type="button" role="radio" data-group="cara" aria-checked="false" tabindex="-1">VIII–X</button>
+    </div>
+
+    <div class="chips" id="chips" role="radiogroup" aria-label="Niveles"></div>
+    <p class="count" id="count" aria-live="polite"></p>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="panel is-on" id="panel-niveles" role="tabpanel" aria-labelledby="tab-niveles">
+    <h2 class="vh">Ficha del nivel</h2>
+    <ul class="legend">
+      <li class="lg-cc">Craneal · Caudal</li>
+      <li class="lg-ap">Anterior · Posterior</li>
+      <li class="lg-lm">Lateral · Medial</li>
+    </ul>
+    <div id="card"></div>
+  </section>
+
+  <section class="panel" id="panel-tabla" role="tabpanel" aria-labelledby="tab-tabla">
+    <h2>Tabla por pares</h2>
+    <p class="lede">Los seis límites, de dos en dos. Respeta la búsqueda y el grupo elegidos en Niveles.</p>
+    <div class="segment" id="pairs" role="radiogroup" aria-label="Par de límites">
+      <button type="button" role="radio" data-pair="cc" aria-checked="true" tabindex="0">Craneal / Caudal</button>
+      <button type="button" role="radio" data-pair="ap" aria-checked="false" tabindex="-1">Ant. / Post.</button>
+      <button type="button" role="radio" data-pair="lm" aria-checked="false" tabindex="-1">Lat. / Medial</button>
+    </div>
+    <div class="table-wrap">
+      <table id="level-table">
+        <caption id="table-caption" class="vh">Craneal y caudal</caption>
+        <thead><tr id="thead-row"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="fine">Toca un nivel para abrir su tarjeta.</p>
+  </section>
+
+  <section class="panel" id="panel-escalera" role="tabpanel" aria-labelledby="tab-escalera">
+    <h2>Escalera craneocaudal</h2>
+    <p class="lede">Planos de arriba abajo y el cambio de nivel que marca cada uno.</p>
+    <ol class="ladder" id="ladder"></ol>
+    <p class="callout" id="ladder-rule"></p>
+    <h3>Matices</h3>
+    <ul class="notes" id="notes"></ul>
+  </section>
+
+  <section class="panel" id="panel-acerca" role="tabpanel" aria-labelledby="tab-acerca">
+    <h2>Acerca de</h2>
+    <p class="lede">Cerviganglios es una consulta para el estudio de los niveles ganglionares de cabeza y cuello, del Ia al Xb. Cada tarjeta reúne los seis límites del consenso de 2014 —craneal, caudal, anterior, posterior, lateral y medial— y los sitios en riesgo.</p>
+    <dl class="facts">
+      <div><dt>Versión</dt><dd>1.0</dd></div>
+      <div><dt>Última actualización</dt><dd>12 de noviembre de 2026</dd></div>
+    </dl>
+
+    <h3>Fuente</h3>
+    <a class="ref" href="https://doi.org/10.1016/j.radonc.2013.10.010" target="_blank" rel="noopener noreferrer">
+      <span>
+        <span class="ref-title">Grégoire V et al. Radiother Oncol 2014;110(1):172-181</span>
+        <span class="ref-doi">doi:10.1016/j.radonc.2013.10.010</span>
+      </span>
+      <span class="ref-go" aria-hidden="true">↗</span>
+    </a>
+    <p class="fine">Artículo en acceso abierto, licencia CC BY-NC-ND 3.0. © 2014 los autores y Elsevier Ireland Ltd. Esta consulta no incluye las figuras ni los cortes del atlas.</p>
+
+    <h3>Aviso</h3>
+    <div class="disclaimer">
+      <p>Material de estudio, de uso libre y sin ánimo de lucro. No sustituye al atlas original, que es el que lleva las imágenes, ni al juicio clínico de quien contornea.</p>
+    </div>
+
+    <h3>Instalar</h3>
+    <ol class="steps">
+      <li><strong>iPhone.</strong> Abre la página en Safari, pulsa Compartir y elige «Añadir a pantalla de inicio».</li>
+      <li><strong>Android.</strong> En Chrome, abre el menú y elige instalar la aplicación o añadirla a la pantalla de inicio.</li>
+    </ol>
+    <p class="fine">La primera visita guarda la consulta en el teléfono. Después se abre sin conexión. No usa cookies ni analítica; si cierras el aviso de instalación, el navegador solo recuerda eso en este dispositivo.</p>
+  </section>
+
+  <footer class="site-footer">
+    <p>Material de estudio, sin ánimo de lucro. No sustituye al atlas original —con sus imágenes— ni al juicio clínico.</p>
+    <p><a href="https://doi.org/10.1016/j.radonc.2013.10.010" target="_blank" rel="noopener noreferrer">Grégoire V et al. Radiother Oncol 2014;110(1):172-181</a></p>
+    <p>Versión 1.0 · 12 de noviembre de 2026</p>
+  </footer>
+</main>
+
+<nav class="tabbar" role="tablist" aria-label="Secciones">
+  <button type="button" class="tab" id="tab-niveles" role="tab" data-view-btn="niveles" aria-selected="true" aria-controls="panel-niveles" tabindex="0">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3"></rect><circle class="fill" cx="12" cy="10" r="1.5"></circle><path d="M8 15.5h8"></path></svg>
+    <span>Niveles</span>
+  </button>
+  <button type="button" class="tab" id="tab-tabla" role="tab" data-view-btn="tabla" aria-selected="false" aria-controls="panel-tabla" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2"></rect><path d="M3.5 9.5h17M3.5 14.5h17M10 4v16"></path></svg>
+    <span>Tabla</span>
+  </button>
+  <button type="button" class="tab" id="tab-escalera" role="tab" data-view-btn="escalera" aria-selected="false" aria-controls="panel-escalera" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6.2v3.6M8 14.2v3.6M12 5h7M12 12h7M12 19h7"></path><circle class="fill" cx="8" cy="5" r="1.5"></circle><circle class="fill" cx="8" cy="12" r="1.5"></circle><circle class="fill" cx="8" cy="19" r="1.5"></circle></svg>
+    <span>Escalera</span>
+  </button>
+  <button type="button" class="tab" id="tab-acerca" role="tab" data-view-btn="acerca" aria-selected="false" aria-controls="panel-acerca" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 11v5"></path><circle class="fill" cx="12" cy="8" r="0.9"></circle></svg>
+    <span>Acerca</span>
+  </button>
+</nav>
+</div>
+<noscript>
+  <p class="noscript">Para ver los niveles hace falta JavaScript. La página no carga nada desde otros sitios.</p>
+</noscript>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
